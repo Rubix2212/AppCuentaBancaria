@@ -22,7 +22,7 @@ int main() {
   printf("\n3. Ver saldo");
   printf("\n4. Cambiar password");
   printf("\n5. Salir");
-  printf("\nOpcion:\t");
+  printf("\nOpcion: ");
   scanf("%d", &opcion);
   switch(opcion) {
     case 1:
