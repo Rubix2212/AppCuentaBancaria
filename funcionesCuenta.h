@@ -2,53 +2,130 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
+#include <direct.h>
+#define LONGITUD 20
 
-int comprobarCuenta() {
+void hidePassword(char *password) {
+  char caracter;
+  int i = 0;
+  while (caracter = getch()) {
+    if (caracter == 13) {
+      password[i] = '\0';
+      break;
+    } else if (caracter == 8) {
+      if (i > 0) {
+        i--;
+        printf("\b \b");
+      }
+    } else {
+      if (i < 20) {
+        printf("*");
+        password[i] = caracter;
+        i++;
+      }
+    }
+  }
+}
+
+void cambiarPassword() {
+  char password[LONGITUD];
+  char newPassword[LONGITUD];
+  char passwordActual[LONGITUD];
+  FILE *archivo = fopen("./assets/password.txt", "r");
+  fscanf(archivo, "%s", passwordActual);
+  fclose(archivo);
+  inicio:
+  printf("Ingrese su password actual: ");
+  hidePassword(password);
+  if (strcmp(password, passwordActual) == 0) {
+    printf("\nIngrese su nuevo password: ");
+    hidePassword(password);
+    printf("\nConfirme su nuevo password: ");
+    hidePassword(newPassword);
+    if (strcmp(password, newPassword) == 0) {
+      archivo = fopen("./assets/password.txt", "w");
+      fprintf(archivo, "%s", password);
+      fclose(archivo);
+      printf("\nPassword cambiado con exito\n");
+    } else {
+      printf("\nLos passwords no coinciden\n");
+      system("pause");
+      system("cls");
+      goto inicio;
+    }
+  } else {
+    printf("\nPassword incorrecto\n");
+    system("pause");
+    system("cls");
+    goto inicio;
+  }
+}
+
+void comprobarCuenta() {
   system("cls");
   printf("Login\n");
-  char nombre[20];
-  char password[20];
-  char nombreCorrecto[20];
-  char passwordCorrecto[20];
+  char nombre[LONGITUD + 1];
+  char password[LONGITUD + 1];
+  char nombreCorrecto[LONGITUD + 1];
+  char passwordCorrecto[LONGITUD + 1];
+  int tries = 3;
   FILE *userFile = fopen("./assets/usuario.txt", "r");
   fscanf(userFile, "%s", nombreCorrecto);
   FILE *passwordFile = fopen("./assets/password.txt", "r");
   fscanf(passwordFile, "%s", passwordCorrecto);
-  nombre:
-  printf("Nombre: ");
-  scanf("%s", nombre);
-  if (strcmp(nombre, nombreCorrecto) == 0) {
-    password:
+  while (tries > 0) {
+    printf("Nombre: ");
+    scanf("%s", nombre); 
     printf("Password: ");
-    scanf("%s", password);
-    if (strcmp(password, passwordCorrecto) == 0) {
-      printf("Login correcto! \n");
-
+    hidePassword(password);
+    if (strcmp(nombre, nombreCorrecto) == 0 && 
+    strcmp(password, passwordCorrecto) == 0) {
+      system("cls");
+      break;
     } else {
-      printf("Password incorrecto\n");
-      goto password;
+      tries--;
+      printf("\nNombre o password incorrecto\nIntentos restantes: %d\n", tries);
     }
-  } else {
-    printf("Nombre incorrecto\n");
-    goto nombre;
+    if (tries == 0) {
+      printf("Demasiados intentos, cerrando programa\n");
+      system("pause");
+      exit(0);
+    }
   }
 }
 
 void crearCuenta() {
-  char nombre[20];
-  char password[20];
-  FILE *usuario_file = fopen("./assets/usuario.txt", "w");
-  FILE *password_file = fopen("./assets/password.txt", "w");
+  if (_mkdir("./assets") == 0) {
+    _mkdir("./assets");
+  } 
+  char nombre[LONGITUD + 1];
+  char password[LONGITUD + 1];
+  char caracter;
+  int i = 0;
+  float saldo;
   system("cls");
+  FILE *usuario_file = fopen("./assets/usuario.txt", "w");
   printf("Creacion de Cuenta Bancaria");
   printf("\nNombre: ");
   scanf("%s", &nombre);
-  printf("Password: ");
-  scanf("%s", &password);
-  fopen("./assets/usuario.txt", "w");
   fprintf(usuario_file, "%s", nombre);
-  fprintf(password_file, "%s", password);
   fclose(usuario_file);
+  FILE *password_file = fopen("./assets/password.txt", "w");
+  printf("Password: ");
+  hidePassword(password);
+  fprintf(password_file, "%s", password);
   fclose(password_file);
-  printf("Cuenta creada con exito\n");
+  FILE *archivo = fopen("./assets/cuenta.txt", "w");
+  printf("\nIngrese el saldo inicial: $");
+  scanf("%f", &saldo);
+  fprintf(archivo, "%.2f", saldo);
+  fclose(archivo);
+  if (fopen("./assets/cuenta.txt", "r") == NULL || 
+  fopen("./assets/usuario.txt", "r") == NULL || 
+  fopen("./assets/password.txt", "r") == NULL) {
+    printf("\nError al crear la cuenta");
+    exit(0);
+  } else {
+    printf("\nCuenta creada con exito");
+  }
 }
