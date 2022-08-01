@@ -13,7 +13,7 @@ void depositar() {
   scanf("%f", &deposito);
   fclose(archivo);
   saldo += deposito;
-  archivo = fopen("cuenta.txt", "w");  
+  archivo = fopen("./assets/cuenta.txt", "w");  
   fprintf(archivo, "%f", saldo);
   fclose(archivo);
   printf("Operacion realizada con exito\n");
