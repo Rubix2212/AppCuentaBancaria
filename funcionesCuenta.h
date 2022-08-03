@@ -27,6 +27,17 @@ void hidePassword(char *password) {
   }
 }
 
+void cambiarNombre() {
+  system("cls");
+  char nombre[LONGITUD + 1];
+  printf("Ingrese su nuevo nombre: ");
+  scanf("%s", nombre);
+  FILE *archivo = fopen("./assets/usuario.txt", "w");
+  fprintf(archivo, "%s", nombre);
+  fclose(archivo);
+  printf("Nombre cambiado con exito\n");
+}
+
 void cambiarPassword() {
   char password[LONGITUD];
   char newPassword[LONGITUD];
@@ -35,26 +46,26 @@ void cambiarPassword() {
   fscanf(archivo, "%s", passwordActual);
   fclose(archivo);
   inicio:
-  printf("Ingrese su password actual: ");
+  printf("Ingrese su clave actual: ");
   hidePassword(password);
   if (strcmp(password, passwordActual) == 0) {
-    printf("\nIngrese su nuevo password: ");
+    printf("\nIngrese su nueva clave: ");
     hidePassword(password);
-    printf("\nConfirme su nuevo password: ");
+    printf("\nConfirme su nueva clave: ");
     hidePassword(newPassword);
     if (strcmp(password, newPassword) == 0) {
       archivo = fopen("./assets/password.txt", "w");
       fprintf(archivo, "%s", password);
       fclose(archivo);
-      printf("\nPassword cambiado con exito\n");
+      printf("\nLa clave ha cambiado con exito\n");
     } else {
-      printf("\nLos passwords no coinciden\n");
+      printf("\nLas claves no coinciden\n");
       system("pause");
       system("cls");
       goto inicio;
     }
   } else {
-    printf("\nPassword incorrecto\n");
+    printf("\nClave incorrecta\n");
     system("pause");
     system("cls");
     goto inicio;
@@ -76,7 +87,7 @@ void comprobarCuenta() {
   while (tries > 0) {
     printf("Nombre: ");
     scanf("%s", nombre); 
-    printf("Password: ");
+    printf("Clave: ");
     hidePassword(password);
     if (strcmp(nombre, nombreCorrecto) == 0 && 
     strcmp(password, passwordCorrecto) == 0) {
@@ -84,7 +95,7 @@ void comprobarCuenta() {
       break;
     } else {
       tries--;
-      printf("\nNombre o password incorrecto\nIntentos restantes: %d\n", tries);
+      printf("\nNombre o clave incorrecto\nIntentos restantes: %d\n", tries);
     }
     if (tries == 0) {
       printf("Demasiados intentos, cerrando programa\n");
